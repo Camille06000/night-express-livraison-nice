@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex,nofollow" />
+<title>Admin — Night Express</title>
+<style>
+  :root{
+    --bg:#070509; --panel:#0f0d14; --panel2:#151220; --line:#241f30;
+    --text:#f3ecdf; --muted:#8a8296; --gold:#d4af37; --gold2:#f2d472;
+    --ok:#3dd68c; --warn:#f59e0b; --err:#ef4444;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Inter,Arial,sans-serif}
+  a{color:var(--gold2)}
+  button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:9px 14px;background:var(--gold);color:#1a1208;font-weight:600}
+  button.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+  button.danger{background:#2a1417;color:#ffb4b4;border:1px solid #5a2228}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  input,select{font:inherit;background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:7px 10px;width:100%}
+  input:focus,select:focus{outline:0;border-color:var(--gold)}
+  .wrap{max-width:1280px;margin:0 auto;padding:18px}
+  header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  h1{font:600 22px/1 "Playfair Display",Georgia,serif;margin:0;letter-spacing:.3px}
+  h1 span{color:var(--gold);font-style:italic}
+  .pill{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--muted)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+  .toolbar .grow{flex:1;min-width:220px}
+  .login{max-width:380px;margin:8vh auto;padding:28px}
+  .login label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+  .msg{padding:10px 12px;border-radius:8px;margin:10px 0;font-size:14px}
+  .msg.err{background:#2a1417;color:#ffb4b4;border:1px solid #5a2228}
+  .msg.ok{background:#0f2a20;color:#b9f2d3;border:1px solid #1f5a42}
+  .msg.warn{background:#2a2210;color:#ffd99b;border:1px solid #5a4820}
+  table{width:100%;border-collapse:separate;border-spacing:0}
+  thead th{position:sticky;top:0;background:var(--panel2);z-index:1;text-align:left;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.4px;text-transform:uppercase;padding:10px;border-bottom:1px solid var(--line)}
+  tbody td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+  tbody tr:hover{background:#100d18}
+  tbody tr.dirty{background:#1b160a}
+  tbody tr.inactive td:not(:last-child){opacity:.45}
+  .name{font-weight:600}
+  .cat{color:var(--muted);font-size:12.5px}
+  .img{width:44px;height:44px;border-radius:6px;object-fit:cover;background:#000;border:1px solid var(--line)}
+  .w-price{width:95px}
+  .w-slug{width:140px}
+  .center{text-align:center}
+  .right{text-align:right}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .flex{display:flex;gap:8px;align-items:center}
+  .hide{display:none}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+  .dot.on{background:var(--ok)}
+  .dot.off{background:#555}
+  .footer{color:var(--muted);font-size:12px;margin-top:14px;text-align:center}
+  @media(max-width:720px){
+    .w-slug{display:none}
+    .img{width:34px;height:34px}
+  }
+</style>
+</head>
+<body>
+
+<div id="loginView" class="wrap">
+  <div class="card login">
+    <h1>Night <span>Express</span></h1>
+    <div class="pill" style="margin-top:10px">Administration</div>
+    <div id="loginMsg"></div>
+    <label>Email</label>
+    <input id="email" type="email" autocomplete="username" placeholder="toi@exemple.com" />
+    <label>Mot de passe</label>
+    <input id="password" type="password" autocomplete="current-password" />
+    <div style="margin-top:16px;display:flex;gap:8px">
+      <button id="btnLogin" style="flex:1">Se connecter</button>
+      <button id="btnReset" class="ghost" title="Recevoir un lien de reset">Oubli ?</button>
+    </div>
+    <div class="footer">Accès réservé. Les modifications sont appliquées immédiatement sur le site public.</div>
+  </div>
+</div>
+
+<div id="appView" class="wrap hide">
+  <header>
+    <div class="flex">
+      <h1>Night <span>Express</span></h1>
+      <span class="pill">Admin</span>
+      <span id="userEmail" class="pill"></span>
+    </div>
+    <div class="flex">
+      <button id="btnRefresh" class="ghost">↻ Recharger</button>
+      <button id="btnLogout" class="ghost">Déconnexion</button>
+    </div>
+  </header>
+
+  <div id="appMsg"></div>
+
+  <div class="card">
+    <div class="toolbar">
+      <div class="grow">
+        <input id="search" type="search" placeholder="Rechercher un produit (nom, slug)…" />
+      </div>
+      <select id="filterCat" style="max-width:220px"><option value="">Toutes catégories</option></select>
+      <select id="filterActive" style="max-width:160px">
+        <option value="all">Tous</option>
+        <option value="active" selected>Actifs seulement</option>
+        <option value="inactive">Inactifs</option>
+      </select>
+      <span id="counter" class="pill">—</span>
+    </div>
+
+    <div style="overflow:auto;max-height:72vh">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:56px"></th>
+            <th>Produit</th>
+            <th>Catégorie</th>
+            <th class="right">Prix (€)</th>
+            <th class="right">Promo (€)</th>
+            <th class="center">Actif</th>
+            <th class="right" style="width:110px">Action</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">Base : <span id="dbUrl" class="mono"></span> · Les prix sont sauvés individuellement via le bouton <b>Sauver</b> (ou Entrée dans la case prix).</div>
+</div>
+
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+
+const SUPABASE_URL  = "https://ifhhfvphrhznislokzxd.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlmaGhmdnBocmh6bmlzbG9renhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk3NDA5MDgsImV4cCI6MjA2NTMxNjkwOH0.3ctYoFNtg5hLGhj4VQABnvLMEfHXm_yzDqMC4KpQLlI";
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON, {
+  auth: { persistSession: true, autoRefreshToken: true, storageKey: "ne-admin-auth" }
+});
+
+const $ = id => document.getElementById(id);
+const loginView = $("loginView"), appView = $("appView");
+const rowsEl = $("rows"), search = $("search"), filterCat = $("filterCat"), filterActive = $("filterActive");
+const counter = $("counter"), userEmail = $("userEmail");
+$("dbUrl").textContent = SUPABASE_URL.replace("https://","");
+
+let state = { products: [], categories: [], session: null };
+
+function msg(target, text, kind="err"){
+  target.innerHTML = text ? `<div class="msg ${kind}">${text}</div>` : "";
+}
+function fmtPrice(v){ return v==null ? "" : Number(v).toFixed(2); }
+
+async function loadSession(){
+  const { data } = await sb.auth.getSession();
+  state.session = data.session || null;
+  if (state.session) showApp(); else showLogin();
+}
+
+function showLogin(){ appView.classList.add("hide"); loginView.classList.remove("hide"); }
+function showApp(){
+  loginView.classList.add("hide"); appView.classList.remove("hide");
+  userEmail.textContent = state.session?.user?.email || "";
+  loadAll();
+}
+
+async function loadAll(){
+  msg($("appMsg"),"Chargement…","warn");
+  const [p,c] = await Promise.all([
+    sb.from("products").select("id,name,slug,price,price_promo,is_active,category_id,image_url").order("name"),
+    sb.from("categories").select("id,name").order("name")
+  ]);
+  if (p.error){ msg($("appMsg"),`Erreur produits : ${p.error.message}`,"err"); return; }
+  if (c.error){ msg($("appMsg"),`Erreur catégories : ${c.error.message}`,"err"); return; }
+  state.products = p.data || [];
+  state.categories = c.data || [];
+  const catMap = Object.fromEntries(state.categories.map(c=>[c.id,c.name]));
+  state.products.forEach(p=> p._cat = catMap[p.category_id] || "—");
+
+  filterCat.innerHTML = '<option value="">Toutes catégories</option>' +
+    state.categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join("");
+
+  msg($("appMsg"),"","");
+  render();
+}
+
+function render(){
+  const q = search.value.trim().toLowerCase();
+  const cat = filterCat.value;
+  const act = filterActive.value;
+  const list = state.products.filter(p=>{
+    if (q && !((p.name||"").toLowerCase().includes(q) || (p.slug||"").toLowerCase().includes(q))) return false;
+    if (cat && p.category_id !== cat) return false;
+    if (act==="active" && !p.is_active) return false;
+    if (act==="inactive" && p.is_active) return false;
+    return true;
+  });
+  counter.textContent = `${list.length} / ${state.products.length} produits`;
+
+  rowsEl.innerHTML = list.map(p=>`
+    <tr data-id="${p.id}" class="${p.is_active?"":"inactive"}">
+      <td>${p.image_url?`<img class="img" src="${p.image_url}" loading="lazy" onerror="this.style.visibility='hidden'">`:'<div class="img"></div>'}</td>
+      <td>
+        <div class="name">${escapeHtml(p.name||"")}</div>
+        <div class="cat mono w-slug">${escapeHtml(p.slug||"")}</div>
+      </td>
+      <td class="cat">${escapeHtml(p._cat)}</td>
+      <td class="right"><input class="w-price price" type="number" step="0.01" min="0" value="${fmtPrice(p.price)}"></td>
+      <td class="right"><input class="w-price promo" type="number" step="0.01" min="0" value="${fmtPrice(p.price_promo)}"></td>
+      <td class="center"><input type="checkbox" class="active" ${p.is_active?"checked":""}></td>
+      <td class="right"><button class="save" disabled>Sauver</button></td>
+    </tr>
+  `).join("");
+
+  rowsEl.querySelectorAll("tr").forEach(tr=>{
+    const id = tr.dataset.id;
+    const btn = tr.querySelector(".save");
+    const priceI = tr.querySelector(".price");
+    const promoI = tr.querySelector(".promo");
+    const activeI = tr.querySelector(".active");
+    const markDirty = ()=>{ tr.classList.add("dirty"); btn.disabled = false; };
+    priceI.addEventListener("input", markDirty);
+    promoI.addEventListener("input", markDirty);
+    activeI.addEventListener("change", markDirty);
+    priceI.addEventListener("keydown", e=>{ if(e.key==="Enter") btn.click(); });
+    promoI.addEventListener("keydown", e=>{ if(e.key==="Enter") btn.click(); });
+    btn.addEventListener("click", ()=>saveRow(id, priceI, promoI, activeI, tr, btn));
+  });
+}
+
+async function saveRow(id, priceI, promoI, activeI, tr, btn){
+  btn.disabled = true; btn.textContent = "…";
+  const patch = {
+    price: priceI.value===""? null : Number(priceI.value),
+    price_promo: promoI.value===""? null : Number(promoI.value),
+    is_active: !!activeI.checked
+  };
+  const { data, error } = await sb.from("products").update(patch).eq("id", id).select("id,price,price_promo,is_active");
+  if (error){
+    msg($("appMsg"), `Erreur sauvegarde : ${error.message}`, "err");
+    btn.disabled = false; btn.textContent = "Sauver";
+    return;
+  }
+  if (!data || data.length===0){
+    msg($("appMsg"),"Sauvegarde refusée (RLS). Vérifie les policies Supabase.","err");
+    btn.disabled = false; btn.textContent = "Sauver";
+    return;
+  }
+  const p = state.products.find(x=>x.id===id);
+  Object.assign(p, patch);
+  tr.classList.remove("dirty");
+  tr.classList.toggle("inactive", !p.is_active);
+  btn.textContent = "✓"; msg($("appMsg"),`Produit mis à jour.`,"ok");
+  setTimeout(()=>{ btn.textContent="Sauver"; btn.disabled=true; msg($("appMsg"),"",""); }, 1600);
+}
+
+function escapeHtml(s){ return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+$("btnLogin").addEventListener("click", async ()=>{
+  msg($("loginMsg"),"","");
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if (!email || !password){ msg($("loginMsg"),"Email et mot de passe requis.","err"); return; }
+  $("btnLogin").disabled = true; $("btnLogin").textContent = "…";
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  $("btnLogin").disabled = false; $("btnLogin").textContent = "Se connecter";
+  if (error){ msg($("loginMsg"), error.message, "err"); return; }
+  state.session = data.session; showApp();
+});
+
+$("btnReset").addEventListener("click", async ()=>{
+  const email = $("email").value.trim();
+  if (!email){ msg($("loginMsg"),"Entre ton email d'abord.","warn"); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email);
+  msg($("loginMsg"), error ? error.message : "Email envoyé. Vérifie ta boîte mail.", error?"err":"ok");
+});
+
+$("btnLogout").addEventListener("click", async ()=>{
+  await sb.auth.signOut(); state.session = null; showLogin();
+});
+
+$("btnRefresh").addEventListener("click", loadAll);
+[search, filterCat, filterActive].forEach(el => el.addEventListener("input", render));
+
+sb.auth.onAuthStateChange((_e, session)=>{ state.session = session; if(!session) showLogin(); });
+
+loadSession();
+</script>
+</body>
+</html>
