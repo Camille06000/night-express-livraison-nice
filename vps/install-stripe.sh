@@ -60,14 +60,13 @@ else
   read -rsp "Colle ta cle secrete Stripe puis Entree : " KEY </dev/tty; echo
   KEY=$(printf '%s' "$KEY" | tr -d '[:space:]' | sed 's/^\x1b\[200~//; s/\x1b\[201~$//; s/~$//')
   [[ "$KEY" =~ ^(sk|rk)_(live|test)_[A-Za-z0-9]+$ ]] || die "cle invalide (doit commencer par sk_live_ ou sk_test_)"
-  umask 077
-  printf 'STRIPE_SECRET_KEY=%s\nPORT=%s\nSITE_URL=https://night-express-livraison-nice.com\n' "$KEY" "$PORT" > "$ENVF"
+  ( umask 077; printf 'STRIPE_SECRET_KEY=%s\nPORT=%s\nSITE_URL=https://night-express-livraison-nice.com\n' "$KEY" "$PORT" > "$ENVF" )
   chmod 600 "$ENVF"
   unset KEY
 fi
 
 say "Installation du service"
-mkdir -p "$APP"
+install -d -m 755 "$APP"
 install -m 644 "$TMP/server.js" "$APP/server.js"
 case "$NODE" in
   /root/*) RUNAS="User=root" ;;
