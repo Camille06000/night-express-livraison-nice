@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Paiement — Night Express Nice</title>
+<meta name="robots" content="noindex"/>
+<link rel="icon" href="/favicon.ico"/>
+<style>
+  :root{
+    --gold:#e9c989;--gold-dim:#c9a86a;
+    --bg1:#0a0710;--bg2:#140d1e;--bg3:#1a1028;
+    --text:#f4efe6;--muted:#a89fb3;
+    --pink:#ff4fbf;--pink-soft:#ff9adf;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:radial-gradient(ellipse at top,var(--bg3) 0%,var(--bg1) 70%);color:var(--text);font-family:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;min-height:100vh}
+  a{color:var(--gold);text-decoration:none}
+  .pay-shell{max-width:640px;margin:0 auto;padding:28px 20px 60px}
+  .pay-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .pay-brand{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;letter-spacing:0.06em;color:var(--gold)}
+  .pay-back{font-size:0.8rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase}
+  .pay-card{background:linear-gradient(180deg,rgba(233,201,137,0.06),rgba(20,13,30,0.9));border:1.5px solid rgba(233,201,137,0.32);border-radius:18px;padding:24px;box-shadow:0 12px 40px rgba(0,0,0,0.55)}
+  .pay-title{font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:700;margin:0 0 6px;color:var(--gold)}
+  .pay-sub{color:var(--muted);font-size:0.92rem;margin:0 0 20px}
+  .pay-summary{display:flex;justify-content:space-between;align-items:baseline;padding:16px 0;border-top:1px dashed rgba(233,201,137,0.25);border-bottom:1px dashed rgba(233,201,137,0.25);margin-bottom:22px}
+  .pay-summary .lbl{color:var(--muted);font-size:0.85rem;letter-spacing:0.12em;text-transform:uppercase}
+  .pay-summary .amt{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--text)}
+  .pay-summary .amt .cur{font-size:1.2rem;color:var(--gold);margin-left:6px}
+  .pay-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:17px 20px;border:0;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#1a0f06;font:800 1.02rem 'Manrope',system-ui,sans-serif;letter-spacing:0.02em;cursor:pointer;box-shadow:0 10px 30px rgba(233,201,137,0.25);transition:transform .15s ease,opacity .2s ease}
+  .pay-btn:hover{transform:translateY(-1px)}
+  .pay-btn[disabled]{opacity:.6;cursor:wait;transform:none}
+  .pay-btn .spinner{width:18px;height:18px;border:2.5px solid rgba(26,15,6,0.25);border-top-color:#1a0f06;border-radius:50%;animation:spin .8s linear infinite;display:none}
+  .pay-btn[disabled] .spinner{display:inline-block}
+  .pay-methods{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+  .pay-methods span{font-size:0.74rem;color:var(--muted);border:1px solid rgba(233,201,137,0.25);border-radius:999px;padding:4px 10px}
+  .pay-info{margin-top:14px;padding:12px 14px;border-radius:10px;background:rgba(233,201,137,0.08);border:1px solid rgba(233,201,137,0.3);color:var(--text);font-size:0.9rem;display:none}
+  .pay-info.show{display:block}
+  .pay-error{margin-top:14px;padding:12px 14px;border-radius:10px;background:rgba(255,79,191,0.12);border:1px solid rgba(255,79,191,0.45);color:#ffc7eb;font-size:0.9rem;display:none}
+  .pay-error.show{display:block}
+  .pay-fb{display:none;margin-top:16px;padding:18px;border-radius:14px;background:rgba(37,211,102,0.08);border:1.5px solid rgba(37,211,102,0.45)}
+  .pay-fb.show{display:block}
+  .pay-fb h2{margin:0 0 6px;font-size:1.1rem;color:#fff}
+  .pay-fb p{margin:0 0 14px;color:var(--text);font-size:0.92rem;line-height:1.5}
+  .pay-fb .btns{display:flex;gap:10px;flex-wrap:wrap}
+  .pay-fb a{flex:1;min-width:150px;text-align:center;padding:13px 16px;border-radius:999px;font-weight:800;font-size:0.95rem}
+  .pay-fb .wa{background:#25D366;color:#fff}
+  .pay-fb .tel{background:linear-gradient(135deg,#f4c074,#dd6f42);color:#1a0f06}
+  .pay-help{margin-top:12px;text-align:center;font-size:0.82rem;color:var(--muted)}
+  .pay-help a{color:#25D366;font-weight:700}
+  .pay-loading{text-align:center;padding:30px;color:var(--muted)}
+  .pay-loading .spinner{display:inline-block;width:28px;height:28px;border:3px solid rgba(233,201,137,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.9s linear infinite;margin-bottom:10px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .pay-foot{margin-top:18px;display:flex;gap:14px;justify-content:center;align-items:center;color:var(--muted);font-size:0.78rem;flex-wrap:wrap}
+  .pay-foot .sep{opacity:0.4}
+  .pay-secure{display:inline-flex;align-items:center;gap:6px}
+  .pay-secure svg{width:14px;height:14px;fill:var(--gold)}
+  @media (max-width:520px){
+    .pay-shell{padding:18px 14px 40px}
+    .pay-card{padding:18px;border-radius:14px}
+    .pay-title{font-size:1.5rem}
+    .pay-summary .amt{font-size:1.6rem}
+  }
+</style>
+</head>
+<body>
+<div class="pay-shell">
+  <div class="pay-head">
+    <a href="/" class="pay-brand">Night Express</a>
+    <a href="/catalogue" class="pay-back">&larr; Retour</a>
+  </div>
+
+  <div class="pay-card">
+    <h1 class="pay-title">Paiement securise</h1>
+    <p class="pay-sub">Réglez votre commande par carte bancaire, Apple Pay ou Google Pay. Paiement traité par Stripe.</p>
+
+    <div class="pay-summary">
+      <span class="lbl">Montant a regler</span>
+      <span class="amt" id="pay-amt">--<span class="cur">EUR</span></span>
+    </div>
+
+    <div id="pay-zone">
+      <button type="button" class="pay-btn" id="pay-btn" disabled>
+        <span class="spinner"></span><span id="pay-btn-t">Chargement...</span>
+      </button>
+      <div class="pay-methods"><span>Carte bancaire</span><span>Apple Pay</span><span>Google Pay</span></div>
+    </div>
+    <div class="pay-info" id="pay-info"></div>
+
+    <div class="pay-error" id="pay-err"></div>
+
+    <!-- NE-PAY-FALLBACK : solution de secours si le paiement en ligne échoue -->
+    <div class="pay-fb" id="pay-fb">
+      <h2 id="pay-fb-title">Paiement en ligne indisponible</h2>
+      <p id="pay-fb-text">Pas d'inquiétude : votre commande est bien enregistrée. Finalisez-la en un clic avec nous sur WhatsApp ou par téléphone, on s'occupe du reste.</p>
+      <div class="btns">
+        <a class="wa" id="pay-fb-wa" href="https://wa.me/33668722323" target="_blank" rel="noopener">Finaliser sur WhatsApp</a>
+        <a class="tel" href="tel:+33668722323">Appeler le 06 68 72 23 23</a>
+      </div>
+    </div>
+    <p class="pay-help">Un souci avec le paiement ? <a id="pay-help-wa" href="https://wa.me/33668722323" target="_blank" rel="noopener">Écrivez-nous sur WhatsApp</a> ou appelez le <a href="tel:+33668722323">06 68 72 23 23</a>.</p>
+  </div>
+
+  <div class="pay-foot">
+    <span class="pay-secure"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>Paiement sécurisé Stripe</span>
+    <span class="sep">|</span>
+    <span>3-D Secure</span>
+    <span class="sep">|</span>
+    <span>Night Express Nice</span>
+  </div>
+</div>
+
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var amountParam = params.get('amount');
+  var refParam = params.get('ref');
+  var legacyId = params.get('checkout') || params.get('id');
+
+  var errEl = document.getElementById('pay-err');
+  var amtEl = document.getElementById('pay-amt');
+  var zone = document.getElementById('pay-zone');
+  var btn = document.getElementById('pay-btn');
+  var btnT = document.getElementById('pay-btn-t');
+  var info = document.getElementById('pay-info');
+
+  var amount = amountParam ? Number(amountParam) : null;
+  var ref = refParam || '';
+
+  function money(n){ return Number(n).toFixed(2).replace('.', ','); }
+
+  function waLink(kind){
+    var amt = amount != null && isFinite(amount) ? money(amount) + ' €' : '';
+    var msg = kind === 'refused'
+      ? 'Bonjour Night Express, mon paiement par carte a été refusé' + (ref ? ' pour la commande ' + ref : '') + (amt ? ' (' + amt + ')' : '') + '. Comment puis-je régler ?'
+      : 'Bonjour Night Express, je n\'arrive pas à payer en ligne' + (ref ? ' ma commande ' + ref : ' ma commande') + (amt ? ' (' + amt + ')' : '') + '. Pouvez-vous la finaliser avec moi ?';
+    return 'https://wa.me/33668722323?text=' + encodeURIComponent(msg);
+  }
+  function showFallback(){
+    var box = document.getElementById('pay-fb');
+    document.getElementById('pay-fb-wa').href = waLink('down');
+    errEl.classList.remove('show');
+    zone.style.display = 'none';
+    box.classList.add('show');
+    try { box.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(e){}
+  }
+  function showError(msg){ errEl.textContent = msg; errEl.classList.add('show'); }
+  function refreshHelp(){ try { document.getElementById('pay-help-wa').href = waLink('down'); } catch(e){} }
+
+  function ready(){
+    amtEl.innerHTML = money(amount) + ' <span class="cur">EUR</span>';
+    btnT.textContent = 'Payer ' + money(amount) + ' €';
+    btn.disabled = false;
+    refreshHelp();
+  }
+
+  btn.addEventListener('click', function(){
+    btn.disabled = true;
+    btnT.textContent = 'Redirection vers le paiement sécurisé...';
+    errEl.classList.remove('show');
+    fetch('/api/payment/stripe/create', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ amount: amount, reference: ref || 'direct' })
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data && data.url) { window.location.href = data.url; return; }
+        showError((data && data.error) || 'Paiement indisponible.');
+        showFallback();
+      })
+      .catch(function(){ showFallback(); });
+  });
+
+  if (params.get('cancelled')) {
+    info.textContent = 'Paiement annulé. Votre commande est conservée, vous pouvez réessayer quand vous voulez.';
+    info.classList.add('show');
+  }
+
+  refreshHelp();
+  if (amount != null && isFinite(amount) && amount > 0) {
+    ready();
+  } else if (legacyId) {
+    // anciens liens de paiement (agent / commandes en cours) : on récupère montant et référence
+    fetch('/api/payment/sumup/status/' + encodeURIComponent(legacyId) + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (!d || d.error || !d.amount) { showFallback(); return; }
+        if (d.paid) { window.location.href = '/commande/merci?checkout=' + encodeURIComponent(legacyId); return; }
+        amount = Number(d.amount);
+        ref = d.checkout_reference || d.order_number || ref;
+        ready();
+      })
+      .catch(showFallback);
+  } else {
+    zone.style.display = 'none';
+    showError('Aucune commande spécifiée. Retournez au catalogue pour passer commande.');
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Merci — Night Express Nice</title>
+<meta name="robots" content="noindex"/>
+<link rel="icon" href="/favicon.ico"/>
+<style>
+  :root{
+    --gold:#e9c989;--gold-dim:#c9a86a;
+    --bg1:#0a0710;--bg2:#140d1e;--bg3:#1a1028;
+    --text:#f4efe6;--muted:#a89fb3;
+    --green:#5cdb95;--pink:#ff4fbf;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:radial-gradient(ellipse at top,var(--bg3) 0%,var(--bg1) 70%);color:var(--text);font-family:'Manrope',system-ui,sans-serif;min-height:100vh}
+  a{color:var(--gold);text-decoration:none}
+  .thx-shell{max-width:640px;margin:0 auto;padding:40px 20px 60px;text-align:center}
+  .thx-brand{display:block;font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;letter-spacing:0.08em;color:var(--gold);margin-bottom:28px}
+  .thx-card{background:linear-gradient(180deg,rgba(92,219,149,0.06),rgba(20,13,30,0.9));border:1.5px solid rgba(92,219,149,0.35);border-radius:22px;padding:36px 28px;box-shadow:0 12px 40px rgba(0,0,0,0.55)}
+  .thx-card.pending{border-color:rgba(233,201,137,0.4);background:linear-gradient(180deg,rgba(233,201,137,0.08),rgba(20,13,30,0.9))}
+  .thx-card.failed{border-color:rgba(255,79,191,0.45);background:linear-gradient(180deg,rgba(255,79,191,0.08),rgba(20,13,30,0.9))}
+  .thx-icon{width:72px;height:72px;margin:0 auto 18px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(92,219,149,0.15);border:2px solid var(--green)}
+  .thx-card.pending .thx-icon{background:rgba(233,201,137,0.12);border-color:var(--gold)}
+  .thx-card.failed .thx-icon{background:rgba(255,79,191,0.15);border-color:var(--pink)}
+  .thx-icon svg{width:40px;height:40px;stroke-width:3;stroke:var(--green);fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .thx-card.pending .thx-icon svg{stroke:var(--gold)}
+  .thx-card.failed .thx-icon svg{stroke:var(--pink)}
+  .thx-title{font-family:'Cormorant Garamond',serif;font-size:2.1rem;font-weight:700;margin:0 0 10px;color:var(--text)}
+  .thx-sub{color:var(--muted);font-size:1rem;line-height:1.55;margin:0 0 24px}
+  .thx-details{display:grid;gap:10px;padding:18px;margin:18px 0 22px;background:rgba(0,0,0,0.28);border-radius:12px;text-align:left;font-size:0.9rem}
+  .thx-details .row{display:flex;justify-content:space-between;gap:12px}
+  .thx-details .lbl{color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;font-size:0.75rem}
+  .thx-details .val{color:var(--text);font-weight:600;text-align:right;word-break:break-all}
+  .thx-btn{display:inline-flex;align-items:center;gap:8px;margin:0 6px;padding:12px 24px;border-radius:999px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;font-size:0.82rem;transition:transform .12s,box-shadow .18s;cursor:pointer}
+  .thx-btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#0a0710;box-shadow:0 8px 24px rgba(233,201,137,0.4)}
+  .thx-btn.primary:hover{transform:translateY(-2px)}
+  .thx-btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(244,239,230,0.3)}
+  .thx-spinner{display:inline-block;width:24px;height:24px;border:3px solid rgba(233,201,137,0.2);border-top-color:var(--gold);border-radius:50%;animation:spin 0.9s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media (max-width:520px){
+    .thx-card{padding:26px 18px;border-radius:16px}
+    .thx-title{font-size:1.6rem}
+    .thx-icon{width:58px;height:58px}
+  }
+</style>
+</head>
+<body>
+<div class="thx-shell">
+  <a href="/" class="thx-brand">Night Express</a>
+
+  <div class="thx-card pending" id="thx-card">
+    <div class="thx-icon" id="thx-icon">
+      <div class="thx-spinner"></div>
+    </div>
+    <h1 class="thx-title" id="thx-title">Verification du paiement...</h1>
+    <p class="thx-sub" id="thx-sub">Merci, nous confirmons votre paiement auprès de notre banque. Cela prend quelques secondes.</p>
+    <div class="thx-details" id="thx-details" style="display:none">
+      <div class="row"><span class="lbl">Reference</span><span class="val" id="d-ref">--</span></div>
+      <div class="row"><span class="lbl">Montant</span><span class="val" id="d-amt">--</span></div>
+      <div class="row"><span class="lbl">Commande</span><span class="val" id="d-ord">--</span></div>
+    </div>
+    <div id="thx-actions" style="display:none">
+      <a href="/catalogue" class="thx-btn primary">Commander a nouveau</a>
+      <a href="/" class="thx-btn ghost">Accueil</a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var checkoutId = params.get('checkout') || params.get('id');
+  var sessionId = params.get('session_id');
+
+  var card = document.getElementById('thx-card');
+  var icon = document.getElementById('thx-icon');
+  var title = document.getElementById('thx-title');
+  var sub = document.getElementById('thx-sub');
+  var details = document.getElementById('thx-details');
+  var actions = document.getElementById('thx-actions');
+  var dRef = document.getElementById('d-ref');
+  var dAmt = document.getElementById('d-amt');
+  var dOrd = document.getElementById('d-ord');
+
+  function svgCheck(){
+    return '<svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg>';
+  }
+  function svgClock(){
+    return '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 16 14"/></svg>';
+  }
+  function svgX(){
+    return '<svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
+  }
+
+  function fmt(n, currency){
+    var v = Number(n) || 0;
+    return v.toFixed(2).replace('.', ',') + ' ' + (currency === 'EUR' ? 'EUR' : (currency || 'EUR'));
+  }
+
+  function renderPaid(data){
+    card.className = 'thx-card';
+    icon.innerHTML = svgCheck();
+    title.textContent = 'Paiement confirme !';
+    sub.textContent = 'Votre commande est enregistree. Un coursier prend le relais et vous livre au plus vite.';
+    dRef.textContent = data.checkout_reference || checkoutId || '--';
+    dAmt.textContent = fmt(data.amount, data.currency);
+    dOrd.textContent = data.order_number || 'Paiement direct';
+    details.style.display = 'grid';
+    actions.style.display = 'block';
+  }
+
+  function renderFailed(data){
+    card.className = 'thx-card failed';
+    icon.innerHTML = svgX();
+    title.textContent = 'Paiement echoue';
+    sub.textContent = 'Le paiement n\u2019a pas pu aboutir. Vous pouvez reessayer ou choisir un autre moyen.';
+    actions.style.display = 'block';
+  }
+
+  function renderPending(data){
+    card.className = 'thx-card pending';
+    icon.innerHTML = svgClock();
+    title.textContent = 'En attente de confirmation';
+    sub.textContent = 'Nous attendons la reponse de la banque. Vous pouvez rester sur cette page.';
+  }
+
+  var tries = 0;
+  var MAX = 40; // 40 x 1.5s = 60s
+  function poll(){
+    if (!checkoutId && !sessionId) {
+      card.className = 'thx-card failed';
+      icon.innerHTML = svgX();
+      title.textContent = 'Aucun identifiant de paiement';
+      sub.textContent = 'Lien invalide. Recommencez votre commande.';
+      actions.style.display = 'block';
+      return;
+    }
+    var statusUrl = sessionId
+      ? '/api/payment/stripe/status/' + encodeURIComponent(sessionId)
+      : '/api/payment/sumup/status/' + encodeURIComponent(checkoutId);
+    fetch(statusUrl + '?t=' + Date.now(), { cache: 'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (!data || data.error) {
+          card.className = 'thx-card failed';
+          icon.innerHTML = svgX();
+          title.textContent = 'Paiement introuvable';
+          sub.textContent = data && data.error ? data.error : 'Merci de recommencer la commande.';
+          actions.style.display = 'block';
+          return;
+        }
+        if (data.paid || data.status === 'PAID') {
+          renderPaid(data);
+          return;
+        }
+        if (data.status === 'FAILED' || data.status === 'EXPIRED') {
+          renderFailed(data);
+          return;
+        }
+        // still pending -> continue polling
+        renderPending(data);
+        tries++;
+        if (tries < MAX) setTimeout(poll, 1500);
+        else {
+          // give up the active poll, let user refresh
+          sub.textContent = 'La confirmation prend plus de temps que prevu. Vous pouvez rafraichir cette page.';
+          actions.style.display = 'block';
+        }
+      })
+      .catch(function(){
+        tries++;
+        if (tries < MAX) setTimeout(poll, 2500);
+      });
+  }
+
+  poll();
+})();
+</script>
+</body>
+</html>

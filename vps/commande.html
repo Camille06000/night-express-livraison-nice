@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Finaliser ma commande — Night Express Nice</title>
+<meta name="robots" content="noindex"/>
+<link rel="icon" href="/favicon.ico"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --gold:#e9c989;--gold-2:#c9a86a;--gold-3:#8b6f3d;
+    --bg1:#0a0710;--bg2:#140d1e;--bg3:#1a1028;--bg4:#221635;
+    --text:#f4efe6;--muted:#a89fb3;--dim:#6f6679;
+    --pink:#ff4fbf;--pink-soft:#ff9adf;--green:#5cdb95;--red:#ff5c7a;
+    --ring:rgba(233,201,137,0.35);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:radial-gradient(ellipse at top,var(--bg3) 0%,var(--bg1) 70%) fixed;color:var(--text);font-family:'Manrope',system-ui,'Segoe UI',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased}
+  a{color:var(--gold);text-decoration:none}
+
+  /* ===== Shell ===== */
+  .shell{max-width:980px;margin:0 auto;padding:28px 20px 80px}
+  .head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand-logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold-2));display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(233,201,137,0.35);font-family:'Cormorant Garamond',serif;font-weight:700;color:#0a0710;font-size:1.3rem}
+  .brand-title{font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:700;letter-spacing:0.06em;color:var(--gold);line-height:1}
+  .brand-sub{font-size:0.7rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+  .head .back{font-size:0.78rem;color:var(--muted);letter-spacing:0.14em;text-transform:uppercase;padding:8px 14px;border:1px solid rgba(244,239,230,0.14);border-radius:999px;transition:color .15s,border-color .15s}
+  .head .back:hover{color:var(--text);border-color:rgba(233,201,137,0.5)}
+
+  /* ===== Progress ===== */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0 0 26px}
+  .step{position:relative;padding:14px 16px;border-radius:14px;background:linear-gradient(180deg,rgba(244,239,230,0.03),rgba(244,239,230,0.01));border:1px solid rgba(244,239,230,0.07);display:flex;align-items:center;gap:12px}
+  .step.active{border-color:var(--ring);background:linear-gradient(180deg,rgba(233,201,137,0.08),rgba(20,13,30,0.6));box-shadow:0 6px 20px rgba(233,201,137,0.12)}
+  .step .dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.82rem;background:rgba(244,239,230,0.06);color:var(--muted);flex:0 0 auto}
+  .step.active .dot{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#0a0710;box-shadow:0 4px 14px rgba(233,201,137,0.45)}
+  .step .lbl{font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted)}
+  .step.active .lbl{color:var(--text)}
+  @media (max-width:640px){.step .lbl{font-size:0.7rem}.step{padding:10px 12px}}
+
+  /* ===== Layout ===== */
+  .grid{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;align-items:start}
+  @media (max-width:880px){.grid{grid-template-columns:1fr}}
+
+  .panel{background:linear-gradient(180deg,rgba(233,201,137,0.05),rgba(20,13,30,0.85));border:1.5px solid rgba(233,201,137,0.2);border-radius:20px;padding:26px;box-shadow:0 14px 50px rgba(0,0,0,0.45)}
+  .panel + .panel{margin-top:18px}
+  .panel-title{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:700;color:var(--gold);margin:0 0 4px;letter-spacing:0.03em}
+  .panel-sub{color:var(--muted);font-size:0.88rem;margin:0 0 20px}
+
+  /* ===== Form fields ===== */
+  .field{margin-bottom:16px;position:relative}
+  .field > label{display:block;font-size:0.72rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin:0 4px 8px}
+  .field .ctl{width:100%;padding:14px 16px;font:inherit;font-size:0.98rem;color:var(--text);background:linear-gradient(180deg,rgba(0,0,0,0.35),rgba(0,0,0,0.15));border:1px solid rgba(244,239,230,0.12);border-radius:12px;outline:none;transition:border-color .15s,box-shadow .15s,background .15s}
+  .field .ctl:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(233,201,137,0.2);background:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.2))}
+  .field .ctl::placeholder{color:var(--dim)}
+  textarea.ctl{resize:vertical;min-height:82px;max-height:220px;line-height:1.5}
+  .field.inline{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:540px){.field.inline{grid-template-columns:1fr}}
+  .hint{display:block;margin:6px 4px 0;font-size:0.75rem;color:var(--muted)}
+  .hint.err{color:var(--red)}
+  .hint.ok{color:var(--green)}
+
+  /* ===== Address autocomplete ===== */
+  .addr-wrap{position:relative}
+  .addr-icon{position:absolute;top:13px;right:14px;width:20px;height:20px;color:var(--gold);pointer-events:none}
+  .addr-icon svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .addr-suggest{position:absolute;top:calc(100% + 6px);left:0;right:0;background:linear-gradient(180deg,#1a1028,#140d1e);border:1px solid rgba(233,201,137,0.35);border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,0.65);z-index:20;overflow:hidden;max-height:320px;overflow-y:auto;display:none}
+  .addr-suggest.show{display:block}
+  .addr-item{padding:12px 14px;cursor:pointer;display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid rgba(244,239,230,0.05);transition:background .12s}
+  .addr-item:last-child{border-bottom:none}
+  .addr-item:hover,.addr-item.focus{background:rgba(233,201,137,0.08)}
+  .addr-item .pin{width:18px;height:18px;flex:0 0 auto;color:var(--gold);margin-top:2px}
+  .addr-item .pin svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .addr-item .ln1{font-size:0.92rem;font-weight:600;color:var(--text);line-height:1.3}
+  .addr-item .ln2{font-size:0.78rem;color:var(--muted);margin-top:2px}
+
+  /* ===== Zone info card ===== */
+  .zone{margin-top:14px;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(92,219,149,0.08),rgba(233,201,137,0.04));border:1px solid rgba(92,219,149,0.28);display:none}
+  .zone.show{display:block}
+  .zone.ko{background:linear-gradient(135deg,rgba(255,92,122,0.08),rgba(255,79,191,0.04));border-color:rgba(255,92,122,0.35)}
+  .zone-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .zone-badge{font-size:0.7rem;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;padding:4px 10px;border-radius:999px;background:var(--green);color:#05240f}
+  .zone.ko .zone-badge{background:var(--red);color:#2b0510}
+  .zone-title{font-weight:700;font-size:0.95rem}
+  .zone-rows{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:8px}
+  .zone-row{display:flex;flex-direction:column}
+  .zone-row .k{font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+  .zone-row .v{font-size:0.98rem;font-weight:700;color:var(--text)}
+
+  /* ===== Cart panel ===== */
+  .cart-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+  .cart-row{display:grid;grid-template-columns:48px 1fr auto;gap:12px;align-items:center;padding:10px;border-radius:12px;background:rgba(0,0,0,0.28);border:1px solid rgba(244,239,230,0.06)}
+  .cart-row .ph{width:48px;height:48px;border-radius:8px;background:linear-gradient(135deg,rgba(233,201,137,0.12),rgba(20,13,30,0.8));display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .cart-row .ph img{max-width:100%;max-height:100%;object-fit:contain}
+  .cart-row .nm{font-size:0.9rem;font-weight:600;color:var(--text);line-height:1.25}
+  .cart-row .meta{font-size:0.75rem;color:var(--muted);margin-top:2px}
+  .cart-row .price{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.1rem;color:var(--gold);white-space:nowrap}
+  .cart-qty{display:flex;align-items:center;gap:6px;margin-top:4px}
+  .qbtn{width:24px;height:24px;border-radius:6px;border:1px solid rgba(244,239,230,0.18);background:transparent;color:var(--text);font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:background .12s,border-color .12s}
+  .qbtn:hover{background:rgba(233,201,137,0.12);border-color:var(--gold)}
+  .qval{min-width:22px;text-align:center;font-size:0.88rem;font-weight:700}
+  .cart-empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:0.92rem}
+  .cart-empty a{font-weight:700;border-bottom:1px dashed var(--gold)}
+
+  .totals{border-top:1px dashed rgba(233,201,137,0.3);padding-top:14px}
+  .tr{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;font-size:0.92rem;color:var(--muted)}
+  .tr.big{padding-top:12px;margin-top:8px;border-top:1px dashed rgba(233,201,137,0.2);font-size:1.1rem;color:var(--text)}
+  .tr.big .v{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:var(--gold)}
+  .tr .v{font-weight:700;color:var(--text)}
+
+  /* ===== Submit ===== */
+  .actions{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap}
+  .btn{flex:1;min-width:180px;padding:16px 22px;border-radius:999px;border:none;cursor:pointer;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;font-size:0.85rem;transition:transform .12s,box-shadow .18s,opacity .18s;display:inline-flex;align-items:center;justify-content:center;gap:10px}
+  .btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-2));color:#0a0710;box-shadow:0 10px 30px rgba(233,201,137,0.45)}
+  .btn.primary:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 14px 36px rgba(233,201,137,0.6)}
+  .btn.primary:disabled{opacity:0.5;cursor:not-allowed;box-shadow:none}
+  .btn.ghost{flex:0 0 auto;background:transparent;color:var(--text);border:1px solid rgba(244,239,230,0.2)}
+  .btn .spin{width:16px;height:16px;border:2px solid rgba(0,0,0,0.25);border-top-color:#0a0710;border-radius:50%;animation:spin 0.8s linear infinite;display:none}
+  .btn.loading .spin{display:inline-block}
+  .btn.loading .t{opacity:0.7}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .notice{margin-top:16px;padding:12px 14px;border-radius:10px;font-size:0.88rem;display:none}
+  .notice.show{display:block}
+  .notice.err{background:rgba(255,92,122,0.12);border:1px solid rgba(255,92,122,0.4);color:#ffcdd4}
+  .notice.ok{background:rgba(92,219,149,0.1);border:1px solid rgba(92,219,149,0.4);color:#b8f2d3}
+
+  .pay-foot{margin-top:16px;display:flex;justify-content:center;gap:14px;align-items:center;color:var(--muted);font-size:0.78rem;flex-wrap:wrap}
+  .pay-foot .sep{opacity:0.4}
+  .pay-secure{display:inline-flex;align-items:center;gap:6px}
+  .pay-secure svg{width:14px;height:14px;fill:var(--gold)}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="head">
+    <a href="/" class="brand">
+      <span class="brand-logo">N</span>
+      <span>
+        <span class="brand-title">Night Express</span><br>
+        <span class="brand-sub">Livraison de nuit &middot; Nice</span>
+      </span>
+    </a>
+    <a href="/catalogue" class="back">&larr; Modifier le panier</a>
+  </div>
+
+  <div class="steps">
+    <div class="step"><div class="dot">1</div><div class="lbl">Panier</div></div>
+    <div class="step active"><div class="dot">2</div><div class="lbl">Commande</div></div>
+    <div class="step"><div class="dot">3</div><div class="lbl">Paiement</div></div>
+  </div>
+
+  <form id="ne-form" class="grid" autocomplete="on">
+
+    <!-- LEFT COLUMN : FORM -->
+    <div>
+
+      <div class="panel">
+        <h2 class="panel-title">Vos coordonnees</h2>
+        <p class="panel-sub">Necessaires pour vous recontacter et livrer votre commande.</p>
+
+        <div class="field">
+          <label for="f-name">Nom complet</label>
+          <input id="f-name" name="name" class="ctl" type="text" autocomplete="name" placeholder="Prenom et nom" required />
+        </div>
+
+        <div class="field">
+          <label for="f-phone">Telephone</label>
+          <input id="f-phone" name="phone" class="ctl" type="tel" autocomplete="tel" inputmode="tel" placeholder="06 12 34 56 78" required />
+          <span class="hint" id="h-phone">Numero mobile francais &mdash; nous vous contactons au besoin.</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2 class="panel-title">Adresse de livraison</h2>
+        <p class="panel-sub">Tapez votre adresse, nous la reconnaissons automatiquement.</p>
+
+        <div class="field addr-wrap">
+          <label for="f-address">Adresse complete</label>
+          <input id="f-address" name="address" class="ctl" type="text" autocomplete="street-address" placeholder="12 rue de la Republique, 06000 Nice" required />
+          <span class="addr-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></span>
+          <div class="addr-suggest" id="addr-suggest" role="listbox"></div>
+          <span class="hint" id="h-address">Zones couvertes : Nice, Saint-Laurent, Cagnes, Villeneuve-Loubet, Antibes, Juan-les-Pins, Cannes.</span>
+        </div>
+
+        <div class="zone" id="zone-info"></div>
+
+        <div class="field" style="margin-top:14px">
+          <label for="f-notes">Instructions (optionnel)</label>
+          <textarea id="f-notes" name="notes" class="ctl" placeholder="Etage, code d'entree, nom sur l'interphone, etc."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN : CART SUMMARY -->
+    <div>
+      <div class="panel" id="cart-panel">
+        <h2 class="panel-title">Votre panier</h2>
+        <p class="panel-sub" id="cart-count">&nbsp;</p>
+        <div class="cart-list" id="cart-list"></div>
+
+        <div class="totals" id="totals" style="display:none">
+          <div class="tr"><span>Sous-total</span><span class="v" id="t-sub">--</span></div>
+          <div class="tr"><span id="t-fee-lbl">Livraison</span><span class="v" id="t-fee">--</span></div>
+          <div class="tr big"><span>Total TTC</span><span class="v" id="t-tot">--</span></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn primary" id="btn-submit">
+          <span class="spin"></span><span class="t">Payer par carte</span>
+        </button>
+      </div>
+
+      <div class="notice" id="notice"></div>
+
+      <div class="pay-foot">
+        <span class="pay-secure"><svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>Stripe &mdash; Carte, Apple Pay, Google Pay</span>
+        <span class="sep">|</span>
+        <span>Paiement apres validation</span>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<script>
+(function(){
+  /* ============ Cart from localStorage ============ */
+  var CART_KEY = 'night-express-cart-v2';
+  function readCart(){
+    try {
+      var raw = localStorage.getItem(CART_KEY);
+      if (!raw) return [];
+      var obj = JSON.parse(raw);
+      // shape can be array or { items: [...] }
+      var items = Array.isArray(obj) ? obj : (obj && Array.isArray(obj.items) ? obj.items : (obj && obj.state && Array.isArray(obj.state.items) ? obj.state.items : []));
+      return items.filter(Boolean);
+    } catch(e){ return []; }
+  }
+  function writeCart(items){
+    try {
+      var raw = localStorage.getItem(CART_KEY);
+      var obj = null;
+      try { obj = raw ? JSON.parse(raw) : null; } catch(e){ obj = null; }
+      if (obj && obj.state && Array.isArray(obj.state.items)) { obj.state.items = items; }
+      else if (obj && Array.isArray(obj.items)) { obj.items = items; }
+      else { obj = items; }
+      localStorage.setItem(CART_KEY, JSON.stringify(obj));
+    } catch(e){}
+  }
+
+  function toNum(n){ var v = Number(n); return isFinite(v) ? v : 0; }
+  function fmt(n){ var v = toNum(n); return v.toFixed(2).replace('.', ',') + ' EUR'; }
+  function itemQty(it){ return Math.max(1, Math.min(24, Number(it.quantity || it.qty || 1))); }
+  function itemPrice(it){ return toNum(it.price != null ? it.price : (it.unit_price != null ? it.unit_price : (it.unitPrice != null ? it.unitPrice : 0))); }
+  function itemId(it){ return it.id || it.product_id || it.productId || null; }
+  function itemName(it){ return it.name || it.product_name || it.productName || 'Produit'; }
+  function itemImg(it){ return it.image_url || it.imageUrl || it.image || ''; }
+
+  /* ============ Render cart ============ */
+  var cartList = document.getElementById('cart-list');
+  var cartCount = document.getElementById('cart-count');
+  var totals = document.getElementById('totals');
+  var tSub = document.getElementById('t-sub');
+  var tFee = document.getElementById('t-fee');
+  var tFeeLbl = document.getElementById('t-fee-lbl');
+  var tTot = document.getElementById('t-tot');
+
+  var state = {
+    items: readCart(),
+    zone: null,
+    submitting: false,
+  };
+
+  function renderCart(){
+    cartList.innerHTML = '';
+    if (!state.items.length) {
+      cartList.innerHTML = '<div class="cart-empty">Panier vide.<br><a href="/catalogue">Parcourir le catalogue</a></div>';
+      cartCount.textContent = '';
+      totals.style.display = 'none';
+      updateSubmit();
+      return;
+    }
+    var totalQty = 0;
+    state.items.forEach(function(it, idx){
+      var qty = itemQty(it);
+      totalQty += qty;
+      var row = document.createElement('div');
+      row.className = 'cart-row';
+      row.innerHTML = ''
+        + '<div class="ph">' + (itemImg(it) ? '<img src="' + itemImg(it) + '" alt=""/>' : '<span style="color:var(--gold);font-weight:700">N</span>') + '</div>'
+        + '<div>'
+        +   '<div class="nm">' + itemName(it) + '</div>'
+        +   '<div class="meta">' + fmt(itemPrice(it)) + ' / unite</div>'
+        +   '<div class="cart-qty">'
+        +     '<button type="button" class="qbtn" data-act="dec" data-idx="' + idx + '" aria-label="-">&minus;</button>'
+        +     '<span class="qval">' + qty + '</span>'
+        +     '<button type="button" class="qbtn" data-act="inc" data-idx="' + idx + '" aria-label="+">+</button>'
+        +     '<button type="button" class="qbtn" data-act="del" data-idx="' + idx + '" aria-label="Supprimer" title="Retirer" style="margin-left:6px">&times;</button>'
+        +   '</div>'
+        + '</div>'
+        + '<div class="price">' + fmt(itemPrice(it) * qty) + '</div>';
+      cartList.appendChild(row);
+    });
+    cartCount.textContent = totalQty + ' article' + (totalQty > 1 ? 's' : '');
+    totals.style.display = 'block';
+    recomputeTotals();
+    updateSubmit();
+  }
+
+  function recomputeTotals(){
+    var sub = state.items.reduce(function(acc, it){ return acc + itemPrice(it) * itemQty(it); }, 0);
+    tSub.textContent = fmt(sub);
+    var fee = state.zone ? toNum(state.zone.prix_livraison) : 0;
+    tFee.textContent = fee > 0 ? fmt(fee) : (state.zone ? 'Gratuite' : '--');
+    tFeeLbl.textContent = 'Livraison' + (state.zone && state.zone.zone_speciale ? ' &middot; ' + state.zone.zone_speciale : '');
+    tTot.textContent = fmt(sub + fee);
+    return sub + fee;
+  }
+
+  cartList.addEventListener('click', function(ev){
+    var b = ev.target.closest('.qbtn'); if (!b) return;
+    var idx = Number(b.dataset.idx); var act = b.dataset.act;
+    var it = state.items[idx]; if (!it) return;
+    if (act === 'inc') it.quantity = Math.min(24, itemQty(it) + 1);
+    else if (act === 'dec') {
+      var nq = itemQty(it) - 1;
+      if (nq <= 0) state.items.splice(idx, 1);
+      else it.quantity = nq;
+    } else if (act === 'del') {
+      state.items.splice(idx, 1);
+    }
+    writeCart(state.items);
+    renderCart();
+  });
+
+  /* ============ Phone format + validate ============ */
+  var phone = document.getElementById('f-phone');
+  var hPhone = document.getElementById('h-phone');
+  function fmtPhone(v){
+    var d = (v || '').replace(/\D/g, '');
+    if (d.startsWith('33') && d.length > 9) d = '0' + d.slice(2);
+    d = d.slice(0, 10);
+    var out = '';
+    for (var i=0;i<d.length;i+=2) out += (i ? ' ' : '') + d.substr(i, 2);
+    return out;
+  }
+  phone.addEventListener('input', function(){
+    var caret = phone.selectionStart;
+    var prevLen = phone.value.length;
+    phone.value = fmtPhone(phone.value);
+    try { phone.setSelectionRange(phone.value.length, phone.value.length); } catch(e){}
+    validatePhone();
+  });
+  function validatePhone(){
+    var d = phone.value.replace(/\D/g, '');
+    var ok = /^0[67]\d{8}$/.test(d) || /^0[1-5]\d{8}$/.test(d);
+    hPhone.className = 'hint' + (phone.value ? (ok ? ' ok' : ' err') : '');
+    hPhone.textContent = phone.value
+      ? (ok ? 'Numero valide.' : 'Format invalide. Ex : 06 12 34 56 78')
+      : 'Numero mobile francais — nous vous contactons au besoin.';
+    return ok || !phone.value;
+  }
+
+  /* ============ Address autocomplete (api-adresse.data.gouv.fr) ============ */
+  var addr = document.getElementById('f-address');
+  var suggest = document.getElementById('addr-suggest');
+  var hAddress = document.getElementById('h-address');
+  var zoneBox = document.getElementById('zone-info');
+
+  var addrDebounce = null;
+  var currentSuggestions = [];
+  var focusIdx = -1;
+
+  addr.addEventListener('input', function(){
+    var q = addr.value.trim();
+    if (addrDebounce) clearTimeout(addrDebounce);
+    if (q.length < 3) { closeSuggest(); return; }
+    addrDebounce = setTimeout(function(){ fetchAddr(q); }, 220);
+  });
+  addr.addEventListener('focus', function(){
+    if (currentSuggestions.length) suggest.classList.add('show');
+  });
+  addr.addEventListener('keydown', function(ev){
+    if (!currentSuggestions.length || !suggest.classList.contains('show')) return;
+    if (ev.key === 'ArrowDown') { ev.preventDefault(); focusIdx = Math.min(currentSuggestions.length - 1, focusIdx + 1); highlightSuggest(); }
+    else if (ev.key === 'ArrowUp') { ev.preventDefault(); focusIdx = Math.max(0, focusIdx - 1); highlightSuggest(); }
+    else if (ev.key === 'Enter') { if (focusIdx >= 0) { ev.preventDefault(); pickSuggest(currentSuggestions[focusIdx]); } }
+    else if (ev.key === 'Escape') { closeSuggest(); }
+  });
+  document.addEventListener('click', function(ev){
+    if (!ev.target.closest('.addr-wrap')) closeSuggest();
+  });
+
+  function fetchAddr(q){
+    // api-adresse.data.gouv.fr : free, no key, French addresses
+    // center on Nice (7.26, 43.70) for better local results
+    var url = 'https://api-adresse.data.gouv.fr/search/?limit=6&lat=43.70&lon=7.26&q=' + encodeURIComponent(q);
+    fetch(url).then(function(r){ return r.json(); }).then(function(data){
+      var feats = (data && data.features) || [];
+      currentSuggestions = feats;
+      focusIdx = -1;
+      renderSuggest();
+    }).catch(function(){});
+  }
+  function renderSuggest(){
+    if (!currentSuggestions.length) { closeSuggest(); return; }
+    suggest.innerHTML = currentSuggestions.map(function(f, i){
+      var p = f.properties || {};
+      var ln1 = p.name || p.label || '';
+      var ln2 = (p.postcode || '') + ' ' + (p.city || '');
+      return '<div class="addr-item" data-i="' + i + '">'
+        + '<span class="pin"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg></span>'
+        + '<div><div class="ln1">' + ln1 + '</div><div class="ln2">' + ln2.trim() + '</div></div>'
+        + '</div>';
+    }).join('');
+    suggest.classList.add('show');
+    Array.prototype.forEach.call(suggest.querySelectorAll('.addr-item'), function(el){
+      el.addEventListener('click', function(){ pickSuggest(currentSuggestions[Number(el.dataset.i)]); });
+    });
+  }
+  function highlightSuggest(){
+    Array.prototype.forEach.call(suggest.querySelectorAll('.addr-item'), function(el, i){
+      el.classList.toggle('focus', i === focusIdx);
+    });
+  }
+  function closeSuggest(){ suggest.classList.remove('show'); currentSuggestions = []; focusIdx = -1; }
+  function pickSuggest(f){
+    if (!f) return;
+    var p = f.properties || {};
+    var full = p.label || ((p.name || '') + ', ' + (p.postcode || '') + ' ' + (p.city || '')).trim();
+    addr.value = full;
+    closeSuggest();
+    checkZone(full);
+  }
+
+  var zoneDebounce = null;
+  addr.addEventListener('blur', function(){
+    if (!addr.value.trim()) return;
+    if (zoneDebounce) clearTimeout(zoneDebounce);
+    zoneDebounce = setTimeout(function(){ checkZone(addr.value.trim()); }, 150);
+  });
+
+  function checkZone(address){
+    fetch('/api/livraison', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ adresseClient: address })
+    }).then(function(r){ return r.json(); }).then(function(z){
+      state.zone = z;
+      renderZone(z);
+      renderCart();
+    }).catch(function(){});
+  }
+
+  function renderZone(z){
+    if (!z) { zoneBox.classList.remove('show'); return; }
+    var ok = z.is_deliverable !== false;
+    zoneBox.className = 'zone show' + (ok ? '' : ' ko');
+    var rows = '';
+    rows += '<div class="zone-head">'
+          +   '<span class="zone-badge">' + (ok ? 'Zone couverte' : 'Hors zone') + '</span>'
+          +   '<span class="zone-title">' + (z.zone_speciale || 'Livraison Night Express') + '</span>'
+          + '</div>';
+    if (ok) {
+      rows += '<div class="zone-rows">'
+            +   '<div class="zone-row"><span class="k">Distance</span><span class="v">' + (z.distance_km != null ? (Number(z.distance_km).toFixed(1) + ' km') : '--') + '</span></div>'
+            +   '<div class="zone-row"><span class="k">Livraison</span><span class="v">' + (toNum(z.prix_livraison) > 0 ? fmt(z.prix_livraison) : 'Gratuite') + '</span></div>'
+            +   '<div class="zone-row"><span class="k">Panier min.</span><span class="v">' + (z.panier_minimum ? fmt(z.panier_minimum) : '--') + '</span></div>'
+            + '</div>';
+    } else {
+      rows += '<div style="color:#ffcdd4;font-size:0.88rem">Cette adresse est actuellement en dehors de notre zone de livraison. Contactez-nous pour les cas particuliers.</div>';
+    }
+    zoneBox.innerHTML = rows;
+  }
+
+  /* ============ Submit ============ */
+  var form = document.getElementById('ne-form');
+  var btn = document.getElementById('btn-submit');
+  var notice = document.getElementById('notice');
+
+  function showNotice(msg, type){
+    notice.textContent = msg;
+    notice.className = 'notice show ' + (type || 'err');
+  }
+  function hideNotice(){ notice.className = 'notice'; }
+
+  function updateSubmit(){
+    var ok = state.items.length > 0 && (state.zone == null || state.zone.is_deliverable !== false);
+    btn.disabled = !ok || state.submitting;
+    btn.querySelector('.t').textContent = state.submitting ? 'Creation de la commande...' : 'Payer par carte';
+  }
+
+  form.addEventListener('submit', function(ev){
+    ev.preventDefault();
+    hideNotice();
+    if (!state.items.length) { showNotice('Votre panier est vide.', 'err'); return; }
+    var name = document.getElementById('f-name').value.trim();
+    var ph = phone.value.replace(/\s/g, '');
+    var ad = addr.value.trim();
+    var nt = document.getElementById('f-notes').value.trim();
+    if (!name) { showNotice('Veuillez indiquer votre nom.', 'err'); return; }
+    if (!validatePhone() || !ph) { showNotice('Numero de telephone invalide.', 'err'); phone.focus(); return; }
+    if (!ad) { showNotice('Veuillez saisir une adresse.', 'err'); addr.focus(); return; }
+    if (state.zone && state.zone.is_deliverable === false) { showNotice('Cette adresse est hors zone.', 'err'); return; }
+
+    var items = state.items.map(function(it){
+      return { id: itemId(it), quantity: itemQty(it) };
+    }).filter(function(it){ return it.id; });
+    if (!items.length) { showNotice('Produits du panier invalides.', 'err'); return; }
+
+    state.submitting = true; updateSubmit(); btn.classList.add('loading');
+
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customerName: name,
+        phone: ph,
+        address: ad,
+        notes: nt,
+        paymentMethod: 'card',
+        items: items
+      })
+    })
+      .then(function(r){ return r.json().then(function(b){ return { ok: r.ok, status: r.status, body: b }; }); })
+      .then(function(resp){
+        state.submitting = false; btn.classList.remove('loading'); updateSubmit();
+        if (!resp.ok) {
+          showNotice((resp.body && resp.body.error) || 'Erreur lors de la creation de la commande.', 'err');
+          return;
+        }
+        // success -> redirect to /commande/payer?amount=total&ref=orderNumber
+        var total = resp.body.total || resp.body.total_amount || recomputeTotals();
+        var ref = resp.body.orderNumber || resp.body.order_number || '';
+        // clear cart
+        writeCart([]);
+        window.location.assign('/commande/payer?amount=' + encodeURIComponent(Number(total).toFixed(2)) + '&ref=' + encodeURIComponent(ref));
+      })
+      .catch(function(err){
+        state.submitting = false; btn.classList.remove('loading'); updateSubmit();
+        showNotice('Erreur reseau : ' + err.message, 'err');
+      });
+  });
+
+  /* ============ Init ============ */
+  renderCart();
+  // Pre-fill from localStorage if user filled before
+  try {
+    var saved = JSON.parse(localStorage.getItem('ne_checkout_draft') || '{}');
+    if (saved.name) document.getElementById('f-name').value = saved.name;
+    if (saved.phone) { phone.value = saved.phone; validatePhone(); }
+    if (saved.address) { addr.value = saved.address; checkZone(saved.address); }
+    if (saved.notes) document.getElementById('f-notes').value = saved.notes;
+  } catch(e){}
+  // Save draft on change
+  ['f-name','f-phone','f-address','f-notes'].forEach(function(id){
+    var el = document.getElementById(id);
+    el.addEventListener('input', function(){
+      try {
+        localStorage.setItem('ne_checkout_draft', JSON.stringify({
+          name: document.getElementById('f-name').value,
+          phone: phone.value,
+          address: addr.value,
+          notes: document.getElementById('f-notes').value
+        }));
+      } catch(e){}
+    });
+  });
+})();
+</script>
+</body>
+</html>
