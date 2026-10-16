@@ -7,7 +7,8 @@ set -euo pipefail
 RAW="https://raw.githubusercontent.com/Camille06000/night-express-livraison-nice/claude/analyze-server-prices-fDHII/vps"
 APPDIR=${APPDIR:-/root/night-express-app}
 IDX="$APPDIR/server/index.js"
-APIENV="$APPDIR/.env"
+# dotenv charge .env.local puis .env (sans ecraser) : on ecrit dans le premier present
+if [ -f "$APPDIR/.env.local" ]; then APIENV="$APPDIR/.env.local"; else APIENV="$APPDIR/.env"; fi
 SENV=${SENV:-/etc/night-express-stripe.env}
 SAPP=${SAPP:-/opt/night-express-stripe}
 API_PORT=${API_PORT:-3000}
@@ -25,12 +26,12 @@ grep -q "^app.listen(PORT" "$IDX" || die "app.listen(PORT introuvable"
 
 mkdir -p "$BK"
 cp -a "$IDX" "$BK/index.js"
-cp -a "$APIENV" "$BK/api.env"
+[ -f "$APIENV" ] && cp -a "$APIENV" "$BK/api.env"
 [ -f "$SENV" ] && cp -a "$SENV" "$BK/stripe.env"
 [ -f "$SAPP/server.js" ] && cp -a "$SAPP/server.js" "$BK/stripe-server.js"
 cat > "$BK/rollback.sh" <<EOF
 #!/usr/bin/env bash
-cp -a "$BK/index.js" "$IDX"; cp -a "$BK/api.env" "$APIENV"
+cp -a "$BK/index.js" "$IDX"; [ -f "$BK/api.env" ] && cp -a "$BK/api.env" "$APIENV"
 [ -f "$BK/stripe.env" ] && cp -a "$BK/stripe.env" "$SENV"
 [ -f "$BK/stripe-server.js" ] && cp -a "$BK/stripe-server.js" "$SAPP/server.js"
 pm2 restart night-express-api --update-env; systemctl restart night-express-stripe
@@ -40,7 +41,7 @@ chmod 700 "$BK/rollback.sh"
 echo "Sauvegarde : $BK"
 
 say "Jeton interne partage entre l'API et le service Stripe"
-TOK=$(grep -h "^NE_INTERNAL_TOKEN=" "$APIENV" 2>/dev/null | tail -1 | cut -d= -f2- || true)
+TOK=$(grep -h "^NE_INTERNAL_TOKEN=" "$APPDIR/.env.local" "$APPDIR/.env" 2>/dev/null | tail -1 | cut -d= -f2- || true)
 if [ -z "$TOK" ]; then
   TOK=$(python3 -c "import secrets;print(secrets.token_hex(24))")
   printf '\nNE_INTERNAL_TOKEN=%s\n' "$TOK" >> "$APIENV"
